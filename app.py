@@ -7,7 +7,7 @@ Single process, two route groups:
 
 from __future__ import annotations
 
-from fasthtml.common import fast_app, serve
+from fasthtml.common import fast_app
 
 from utils.config import settings
 
@@ -28,7 +28,12 @@ from chat import analytics as _analytics_routes  # noqa: E402,F401
 
 
 def _serve_default():
-    serve(port=settings().port)
+    # Call uvicorn directly rather than FastHTML's `serve()`, which relies on
+    # stack-walking to find the caller's module name — fragile when launched
+    # via `main.py`, and silently exits 0 without starting the server.
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=settings().port)
 
 
 if __name__ == "__main__":
