@@ -68,14 +68,24 @@ def _insert_properties(specs: list[dict]) -> dict[str, int]:
                 INSERT INTO bricksmith.properties
                   (slug, name, address, city, state, zip, metro, asset_type, submarket,
                    units, year_built, year_renovated, sqft, land_sqft, occupancy_pct,
-                   asking_price, description, listing_status, seller_intent)
+                   asking_price, description, listing_status, seller_intent,
+                   deal_stage, ownership, noi_annual, cap_rate)
                 VALUES (%(slug)s, %(name)s, %(address)s, %(city)s, %(state)s, %(zip)s,
                         %(metro)s, %(asset_type)s, %(submarket)s,
                         %(units)s, %(year_built)s, %(year_renovated)s, %(sqft)s, %(land_sqft)s,
                         %(occupancy_pct)s, %(asking_price)s, %(description)s,
-                        %(listing_status)s, %(seller_intent)s)
+                        %(listing_status)s, %(seller_intent)s,
+                        %(deal_stage)s, %(ownership)s, %(noi_annual)s, %(cap_rate)s)
                 ON CONFLICT (slug) DO UPDATE SET
-                  name = EXCLUDED.name, description = EXCLUDED.description
+                  name           = EXCLUDED.name,
+                  description    = EXCLUDED.description,
+                  asking_price   = EXCLUDED.asking_price,
+                  listing_status = EXCLUDED.listing_status,
+                  seller_intent  = EXCLUDED.seller_intent,
+                  deal_stage     = EXCLUDED.deal_stage,
+                  ownership      = EXCLUDED.ownership,
+                  noi_annual     = EXCLUDED.noi_annual,
+                  cap_rate       = EXCLUDED.cap_rate
                 RETURNING id, slug
                 """,
                 s,

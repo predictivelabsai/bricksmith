@@ -126,7 +126,26 @@ def sessions_list(sessions: list[dict], current_sid: str = ""):
     return Div(*items, cls="session-list")
 
 
-def left_pane(*, user_email: str | None, sessions: list[dict], current_sid: str = ""):
+def _bottom_nav(current_path: str = ""):
+    items = [
+        ("Pipeline",     "/app/pipeline",     "◆"),
+        ("Instructions", "/app/instructions", "✎"),
+        ("Analytics",    "/app/analytics",    "∑"),
+    ]
+    links = []
+    for label, href, icon in items:
+        active = current_path.startswith(href) and bool(href)
+        links.append(A(
+            Span(icon, cls="bottom-nav-icon"),
+            Span(label, cls="bottom-nav-label"),
+            href=href,
+            cls=f"bottom-nav-link{' active' if active else ''}",
+        ))
+    return Div(*links, cls="bottom-nav")
+
+
+def left_pane(*, user_email: str | None, sessions: list[dict], current_sid: str = "",
+              current_path: str = ""):
     """The full left pane composition."""
     signin_block = (
         Div(
@@ -160,6 +179,12 @@ def left_pane(*, user_email: str | None, sessions: list[dict], current_sid: str 
                 agent_browser(),
                 cls="agents-section",
             ),
+            Hr(cls="left-hr"),
+            Div(
+                Div(Span("Workspace", cls="section-label")),
+                _bottom_nav(current_path),
+                cls="workspace-section",
+            ),
             cls="left-body",
         ),
         Div(signin_block, cls="left-footer"),
@@ -167,11 +192,54 @@ def left_pane(*, user_email: str | None, sessions: list[dict], current_sid: str 
     )
 
 
+def sample_cards(current_agent_slug: str | None = None):
+    """Gemini-style contextual sample-prompt cards under the chat input.
+
+    Renders the current agent's example_prompts (up to 6) or a curated default
+    6-pack if no agent is bound. Client-side `updateSampleCards(slug)` refreshes
+    the list whenever the user types a prefix or the router picks a new agent.
+    """
+    if current_agent_slug and current_agent_slug in AGENTS_BY_SLUG:
+        agent = AGENTS_BY_SLUG[current_agent_slug]
+        prompts = list(agent.example_prompts[:6])
+        label = f"Try with {agent.name}"
+    else:
+        prompts = [
+            "triage: 220-unit MF in Austin, $62M ask, 4.9% cap in-place",
+            "pf: 5-year pro forma for Vista East Austin at 4% rent growth",
+            "comps: multifamily Austin Class A 2020+ vintage",
+            "memo: draft the investment memo for Arden Buckhead",
+            "dr: audit the data room for Grand Midtown",
+            "rentopt: where is in-place most below market across my portfolio?",
+        ]
+        label = "Try a prompt"
+
+    chips = [
+        Button(
+            Span(p, cls="sample-card-text"),
+            cls="sample-card",
+            onclick=f"fillChat({p!r}); sendMessage(null);",
+            title=p,
+        )
+        for p in prompts
+    ]
+    return Div(
+        Div(Span(label, cls="sample-cards-label"), id="sample-cards-label"),
+        Div(*chips, id="sample-cards-row", cls="sample-cards-row"),
+        id="sample-cards",
+        cls="sample-cards",
+    )
+
+
 def center_pane(*, messages: list[dict], current_agent_slug: str | None = None):
+    import json
     has_messages = bool(messages)
     bubbles = [message_bubble(m["role"], m["content"], m.get("agent_slug")) for m in messages]
 
     input_placeholder = "Ask anything — or type a prefix like `triage:`, `memo:`, `pf:`"
+
+    prompts_lookup = {a.slug: list(a.example_prompts[:6]) for a in AGENTS}
+    names_lookup = {a.slug: a.name for a in AGENTS}
 
     return Div(
         Div(
@@ -202,13 +270,16 @@ def center_pane(*, messages: list[dict], current_agent_slug: str | None = None):
                 placeholder=input_placeholder,
                 rows="2",
                 onkeydown="handleKey(event)",
-                oninput="autoResize(this)",
+                oninput="autoResize(this); onInputChange(this)",
             ),
             Button("Send", type="submit", cls="chat-send", id="send-btn"),
             id="chat-form",
             cls="chat-form",
             onsubmit="sendMessage(event)",
         ),
+        sample_cards(current_agent_slug),
+        NotStr(f'<script id="agent-prompts-data" type="application/json">{json.dumps(prompts_lookup)}</script>'),
+        NotStr(f'<script id="agent-names-data" type="application/json">{json.dumps(names_lookup)}</script>'),
         cls="center-pane",
     )
 

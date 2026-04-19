@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     embedding_model: str = Field(default="BAAI/bge-small-en-v1.5", alias="EMBEDDING_MODEL")
     embedding_dim: int = Field(default=384, alias="EMBEDDING_DIM")
 
+    tavily_api_key: str = Field(default="", alias="TAVILY_API_KEY")
+    exa_api_key: str = Field(default="", alias="EXA_API_KEY")
+
     app_env: str = Field(default="dev", alias="APP_ENV")
     app_secret: str = Field(default="change-me", alias="APP_SECRET")
     port: int = Field(default=5057, alias="PORT")

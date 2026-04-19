@@ -31,6 +31,31 @@ ASSET_MIX = [
 SELLER_INTENT = ["cold", "cold", "warm", "warm", "hot"]
 LISTING_STATUS = ["on_market", "on_market", "off_market", "off_market", "closed"]
 
+# 10 CRE deal stages. Weighted so the top of the funnel is fatter (more sourced
+# + screened cards) and the bottom still has a handful — looks alive on the
+# kanban without needing 200 rows.
+DEAL_STAGES = (
+    ["sourced"] * 7
+    + ["screened"] * 7
+    + ["loi"] * 4
+    + ["psa"] * 3
+    + ["diligence"] * 5
+    + ["committee"] * 3
+    + ["closing"] * 3
+    + ["closed"] * 4
+    + ["held"] * 3
+    + ["exited"] * 1
+)
+
+OWNERSHIP = [
+    "institutional", "institutional",
+    "private", "private",
+    "family_office",
+    "reit",
+    "developer",
+    "jv",
+]
+
 MF_NAMES = ["Vista", "The", "Arden", "Parc", "Alto", "Ridge", "Aviator", "Haven", "Enclave at",
             "Residences at", "The Graham", "Maple", "Silver Spring", "Lumen", "Parkline"]
 OFFICE_NAMES = ["Plaza", "Tower", "Commons", "Center", "Exchange", "Building", "Hub", "Works",
@@ -64,6 +89,10 @@ class PropertySpec:
     description: str
     listing_status: str
     seller_intent: str
+    deal_stage: str
+    ownership: str
+    noi_annual: float | None
+    cap_rate: float | None
 
 
 def _name_for(asset_type: str, rng: random.Random, submarket: str) -> str:
@@ -161,6 +190,25 @@ def generate(seed: int = 42) -> list[dict]:
             else:
                 asking_price = float(price)
 
+            # Realistic cap rate by asset type + metro tier (tight spread, noisy)
+            base_cap = {
+                "multifamily": 5.0,
+                "office":      7.5,
+                "industrial":  5.8,
+                "retail":      6.8,
+            }[asset_type]
+            cap_rate = round(base_cap + rng.uniform(-0.8, 1.2), 2)
+            # NOI derived from price × cap (if priced); otherwise plausible proxy
+            if asking_price:
+                noi_annual = round(asking_price * cap_rate / 100.0, 2)
+            elif asset_type == "multifamily" and units:
+                noi_annual = round(units * rng.uniform(8000, 14000), 2)
+            elif sqft:
+                psf = {"office": 22, "industrial": 8, "retail": 18}.get(asset_type, 12)
+                noi_annual = round(sqft * psf * rng.uniform(0.7, 1.1), 2)
+            else:
+                noi_annual = None
+
             slug_base = (name + " " + city).lower().replace(" ", "-").replace(",", "").replace("'", "")
             slug_base = "".join(c for c in slug_base if c.isalnum() or c == "-")
             slug = next_slug(slug_base[:50])
@@ -185,6 +233,25 @@ def generate(seed: int = 42) -> list[dict]:
                 description=descr,
                 listing_status=status,
                 seller_intent=intent,
+                deal_stage="",          # assigned after spec list is built, post-shuffle
+                ownership=rng.choice(OWNERSHIP),
+                noi_annual=noi_annual,
+                cap_rate=cap_rate,
             ))
+
+    # Distribute the 10 deal stages across the 40 properties deterministically.
+    # We shuffle the stage pool so asset types are mixed across the board.
+    stage_pool = list(DEAL_STAGES)
+    rng.shuffle(stage_pool)
+    while len(stage_pool) < len(specs):
+        stage_pool.append("sourced")
+    for i, s in enumerate(specs):
+        s.deal_stage = stage_pool[i]
+        # keep listing_status consistent with stage for downstream filters
+        if s.deal_stage in ("closed", "held", "exited"):
+            s.listing_status = "closed"
+            s.asking_price = None
+        elif s.deal_stage in ("sourced", "screened", "loi"):
+            s.listing_status = "on_market" if rng.random() < 0.6 else "off_market"
 
     return [s.__dict__ for s in specs]

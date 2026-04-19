@@ -30,6 +30,10 @@ python main.py                            # serves on :5057 (override via PORT e
 pytest -q tests/
 pytest -q tests/test_agents_smoke.py::test_every_agent_builds  # single test
 
+# end-to-end regression across all 22 agents (hits Grok — ~5-15 min)
+python -m tests.regression_suite                # → docs/regression-latest.md
+python -m tests.regression_suite --slug deal_triage  # single agent
+
 # schema reset (DESTRUCTIVE — drops both schemas)
 python -m db.migrate --drop
 
@@ -52,9 +56,20 @@ Note: `EMBEDDING_DIM` is baked into the `embeddings.embedding vector(N)` column 
 
 ### Route groups
 
-`app.py` creates one FastHTML app and imports two route modules for side effects:
-- `landing/routes.py` — marketing pages at `/`, `/platform`, `/agents`, `/agents/<slug>`, `/how-it-works`, `/pricing`, `/contact`. Shared `page()` wrapper + components in `landing/components.py`. The `/agents` index is rendered directly from `agents.registry.AGENTS`, so adding an agent auto-populates marketing.
-- `chat/routes.py` — the product at `/app` (3-pane UI from `chat/layout.py`), `/app/chat` (SSE stream, described below), `/app/auth/{signin,signout}`, `/app/_debug/ping`.
+`app.py` creates one FastHTML app and imports five route modules for side effects:
+- `landing/routes.py` — marketing pages at `/`, `/platform`, `/agents`, `/agents/<slug>`, `/how-it-works`, `/pricing`, `/contact`. `/agents` is rendered directly from `agents.registry.AGENTS`. The homepage embeds `docs/bricksmith.gif` as a rotating showcase of app functionality.
+- `chat/routes.py` — the 3-pane chat product at `/app`, `/app/chat` (SSE stream), `/app/auth/{signin,signout}`, `/app/_debug/ping`.
+- `chat/pipeline.py` — `/app/pipeline` (kanban across 10 deal stages with filter chips by asset type + ownership) and `/app/pipeline/<slug>` (per-deal chat with the property brief pre-rendered into the right artifact pane).
+- `chat/instructions.py` — `/app/instructions` (list of 22 agent prompts + shared CRE glossary) and GET/POST `/app/instructions/<slug>`. **Save writes to `prompts/system/<slug>.md` and clears `cached_agent.cache_clear()` so the next invocation re-reads the prompt from disk.**
+- `chat/analytics.py` — `/app/analytics` (NL input + 8 seeded questions) and `POST /app/analytics/run`. Grok drafts SQL against the `bricksmith.*` schema, `_guard_sql` rejects anything that isn't a single SELECT / WITH, pandas executes via the psycopg3 pool (the sqlalchemy engine URL resolves to psycopg2 which we don't ship), and Plotly renders the figure + table.
+
+### Chat UX (client + server contract)
+
+Three affordances layer on top of the 3-pane chat:
+
+1. **Sample cards** under the input (Gemini-style). Server embeds `#agent-prompts-data` + `#agent-names-data` JSON blobs; client `updateSampleCards(slug)` refreshes them on every `agent_route` event and whenever the user types a prefix like `triage:`. Per-deal chat re-embeds the same blobs.
+2. **Thinking indicator.** On `agent_route`, client inserts a `.thinking-indicator` bubble with an elapsed timer. Each `tool_start` updates the label to "Thinking… Ns · calling `<tool>`". Cleared on first token or on `done`/`error`.
+3. **"Next step —" follow-up.** If the assistant's final text matches `Next step[:—] …`, the client appends a `.followup-row` with **Yes, do that** / **No thanks** buttons. Clicking yes prefills and sends the follow-up automatically.
 
 ### Agent lifecycle (the critical flow)
 

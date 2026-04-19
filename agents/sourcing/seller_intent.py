@@ -5,9 +5,10 @@ from agents.base import build_agent
 from agents.registry import AGENTS_BY_SLUG
 from tools.properties import search_properties, get_property
 from tools.market import fetch_market_signals
+from tools.search import web_search
 
 SPEC = AGENTS_BY_SLUG["seller_intent"]
-TOOLS = [search_properties, get_property, fetch_market_signals]
+TOOLS = [search_properties, get_property, fetch_market_signals, web_search]
 
 
 @lru_cache(maxsize=1)

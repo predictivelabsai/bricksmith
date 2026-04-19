@@ -6,9 +6,10 @@ from agents.registry import AGENTS_BY_SLUG
 from tools.properties import search_properties
 from tools.market import fetch_market_signals, find_sales_comps
 from tools.rag import retrieve_documents
+from tools.search import web_search
 
 SPEC = AGENTS_BY_SLUG["market_scanner"]
-TOOLS = [search_properties, fetch_market_signals, find_sales_comps, retrieve_documents]
+TOOLS = [search_properties, fetch_market_signals, find_sales_comps, retrieve_documents, web_search]
 
 
 @lru_cache(maxsize=1)

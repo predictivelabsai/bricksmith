@@ -30,6 +30,38 @@ def home():
         cls="border-t border-line",
     )
 
+    showcase = Section_(
+        Div(
+            Eyebrow("See it running"),
+            Heading(2, "A kanban, a chat, an analytics bar — one system.", cls="mt-3 max-w-4xl mb-6"),
+            P("Pipeline across 10 deal stages, per-deal chat with the property brief "
+              "pre-rendered, editable agent prompts, and natural-language analytics over "
+              "your CRE database — all against the same synthetic dataset.",
+              cls="text-ink-muted text-sm max-w-3xl mb-8"),
+            cls="mb-6",
+        ),
+        Div(
+            NotStr(
+                """
+                <div class="relative rounded-2xl overflow-hidden border border-line bg-bg-elevated">
+                  <img src="/docs/bricksmith.gif"
+                       alt="Bricksmith app demo — pipeline, chat, instructions, analytics"
+                       style="width:100%; display:block;"
+                       loading="lazy">
+                </div>
+                """
+            ),
+            cls="max-w-5xl mx-auto",
+        ),
+        Div(
+            A("Open the app", href="/app", cls="inline-flex items-center gap-2 text-accent text-sm font-medium mr-6"),
+            A("Product tour (PDF)", href="/docs/bricksmith-product-tour.pdf",
+              cls="inline-flex items-center gap-2 text-ink-muted text-sm hover:text-accent"),
+            cls="mt-6 text-center",
+        ),
+        cls="border-t border-line",
+    )
+
     how = Section_(
         Div(
             Eyebrow("How it works"),
@@ -59,6 +91,7 @@ def home():
         "Agentic AI for commercial real estate",
         Hero(),
         pillars,
+        showcase,
         how,
         CaseStudyStrip(),
         CTASection(),

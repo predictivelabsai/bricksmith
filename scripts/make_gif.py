@@ -14,17 +14,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SHOTS = ROOT / "screenshots"
 OUT_GIF = ROOT / "docs" / "bricksmith.gif"
 
+# App-functionality focused loop — skip landing frames for the GIF.
 FRAMES = [
-    ("01-home-full.png",           2800),
-    ("02-platform-full.png",       2400),
-    ("03-agents-full.png",         2800),
-    ("04-agent-detail-triage.png", 2400),
-    ("05-how-it-works-full.png",   2400),
-    ("06-pricing-full.png",        2200),
-    ("07-chat-empty.png",          2000),
-    ("08-chat-rentroll.png",       3400),
-    ("09-chat-pro-forma.png",      3200),
-    ("10-chat-memo.png",           3400),
+    ("02-pipeline.png",          3000),
+    ("03-pipeline-filtered.png", 2400),
+    ("04-deal-detail.png",       2800),
+    ("05-chat-empty.png",        2000),
+    ("06-chat-triage.png",       3400),
+    ("07-chat-comps.png",        3200),
+    ("08-chat-memo.png",         3400),
+    ("09-instructions.png",      2400),
+    ("10-instructions-edit.png", 2400),
+    ("11-analytics-empty.png",   2200),
+    ("12-analytics-result.png",  3400),
 ]
 
 TARGET_W = 1200

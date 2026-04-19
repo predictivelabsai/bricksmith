@@ -6,9 +6,10 @@ from agents.registry import AGENTS_BY_SLUG
 from tools.properties import search_properties, get_property
 from tools.market import find_sales_comps, fetch_market_signals
 from tools.financials import normalize_t12
+from tools.search import web_search
 
 SPEC = AGENTS_BY_SLUG["deal_triage"]
-TOOLS = [search_properties, get_property, find_sales_comps, fetch_market_signals, normalize_t12]
+TOOLS = [search_properties, get_property, find_sales_comps, fetch_market_signals, normalize_t12, web_search]
 
 
 @lru_cache(maxsize=1)

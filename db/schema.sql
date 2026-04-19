@@ -53,11 +53,22 @@ CREATE TABLE IF NOT EXISTS bricksmith.properties (
     description    TEXT,
     listing_status TEXT,             -- on_market | off_market | closed
     seller_intent  TEXT,             -- cold | warm | hot
+    deal_stage     TEXT,             -- sourced|screened|loi|psa|diligence|committee|closing|closed|held|exited
+    ownership      TEXT,             -- institutional|private|family_office|reit|developer|jv
+    noi_annual     NUMERIC(14,2),    -- stabilized / in-place annualized NOI
+    cap_rate       NUMERIC(5,2),     -- implied cap rate on asking_price
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+-- Additive, idempotent alters for clusters seeded before these columns existed:
+ALTER TABLE bricksmith.properties ADD COLUMN IF NOT EXISTS deal_stage TEXT;
+ALTER TABLE bricksmith.properties ADD COLUMN IF NOT EXISTS ownership  TEXT;
+ALTER TABLE bricksmith.properties ADD COLUMN IF NOT EXISTS noi_annual NUMERIC(14,2);
+ALTER TABLE bricksmith.properties ADD COLUMN IF NOT EXISTS cap_rate   NUMERIC(5,2);
+
 CREATE INDEX IF NOT EXISTS properties_metro_idx  ON bricksmith.properties(metro);
 CREATE INDEX IF NOT EXISTS properties_type_idx   ON bricksmith.properties(asset_type);
 CREATE INDEX IF NOT EXISTS properties_status_idx ON bricksmith.properties(listing_status);
+CREATE INDEX IF NOT EXISTS properties_stage_idx  ON bricksmith.properties(deal_stage);
 
 CREATE TABLE IF NOT EXISTS bricksmith.rent_rolls (
     id           BIGSERIAL PRIMARY KEY,

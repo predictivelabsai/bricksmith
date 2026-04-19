@@ -67,6 +67,7 @@ AGENTS: tuple[AgentSpec, ...] = (
             "scan: Sun Belt industrial value-add, under $80M, built post-2000",
             "What multifamily deals have surfaced in Austin this month?",
             "Any off-market office deals in Dallas with occupancy below 70%?",
+            "Pull last-mile industrial listings in Phoenix under 200k sqft",
         ),
     ),
     AgentSpec(
@@ -77,6 +78,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "triage: 220-unit MF in Austin, $62M ask, 4.9% cap in-place",
             "Should we pursue the Raleigh industrial deal? 180k sqft, single-tenant.",
+            "Triage a 14-property retail portfolio in Tampa at $180M",
+            "Go/no-go on a Class B office tower in Phoenix, 68% occupied",
         ),
     ),
     AgentSpec(
@@ -87,6 +90,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "comps: multifamily Austin Class A 2020+ vintage",
             "Find rent comps for 2BR in Scottsdale in last 6 months",
+            "Sales comps for last-mile industrial in Dallas last 12 months",
+            "Retail comps for grocery-anchored centers in Nashville 2022-2024",
         ),
     ),
     AgentSpec(
@@ -97,6 +102,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "intent: industrial properties Phoenix 2017 vintage Fannie loans",
             "Which Dallas office properties are likely to trade this year?",
+            "Rank Raleigh MF properties by seller motivation",
+            "Top 10 Sun Belt retail owners most likely to sell in next 6 months",
         ),
     ),
 
@@ -109,6 +116,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "rr: parse the rent roll for Parkline Downtown Austin",
             "Show me the WALT for Deep Ellum Commerce Center",
+            "What's the lease expiry schedule for Arden Buckhead?",
+            "Summarize occupancy + unit mix for Vista East Austin",
         ),
     ),
     AgentSpec(
@@ -119,6 +128,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "t12: normalize the trailing twelve for Arden Buckhead",
             "Compare Arden Buckhead opex per unit to market",
+            "Flag non-recurring items in the Phoenix industrial T12",
+            "Normalize T12 and output a trended NOI build",
         ),
     ),
     AgentSpec(
@@ -129,6 +140,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "pf: build a 5-year pro forma for Vista East Austin assuming 4% rent growth",
             "What's the base case IRR on Cary Last-Mile?",
+            "Sensitivity on exit cap vs. rent growth for Arden Buckhead",
+            "Model downside case at 0% rent growth for Parkline Downtown",
         ),
     ),
     AgentSpec(
@@ -139,6 +152,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "debt: size a 65% LTV Fannie loan on Parkline Downtown",
             "What's the max proceeds at 1.35x DSCR on LoDo Tower?",
+            "Model a senior + mezz stack for the Phoenix industrial deal",
+            "Refinance scenario at 7.25% for Arden Buckhead",
         ),
     ),
     AgentSpec(
@@ -149,6 +164,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "ret: compute returns on the Alto RiNo pro forma",
             "What's the levered IRR with a 30% promote over 10%?",
+            "Unlevered and levered IRR on Vista East Austin",
+            "Build a 3-tier waterfall with 8% pref, 80/20 over 15% IRR",
         ),
     ),
 
@@ -161,6 +178,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "dr: audit the data room for Grand Midtown",
             "Which DD items are missing for the Raleigh industrial deal?",
+            "List gaps + stale versions in the Vista East Austin VDR",
+            "Compare the T12 in the VDR to the one in their broker deck",
         ),
     ),
     AgentSpec(
@@ -171,6 +190,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "abstract: the lease for Suite 100 at Deep Ellum Commerce Center",
             "What are the force majeure terms across my industrial tenants?",
+            "Extract renewal options and kickouts for all active leases at Arden Buckhead",
+            "Flag leases with co-tenancy clauses in my retail portfolio",
         ),
     ),
     AgentSpec(
@@ -181,6 +202,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "title: summarize title issues for Vista East Austin",
             "Are there any zoning nonconformities on the Dallas deal?",
+            "List Schedule B-II exceptions on Grand Midtown",
+            "Is the proposed redevelopment permissible under current zoning?",
         ),
     ),
     AgentSpec(
@@ -191,6 +214,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "pcr: what deferred maintenance is flagged for Maple Downtown?",
             "Build a 10-year capex schedule for Grand Sandy Springs",
+            "Summarize life-safety findings for the Phoenix industrial PCR",
+            "Estimate year-1 immediate-repair spend for Vista East Austin",
         ),
     ),
     AgentSpec(
@@ -201,6 +226,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "env: any RECs at the Phoenix industrial deal?",
             "Summarize environmental risk across my Sun Belt portfolio",
+            "Does the Atlanta office Phase I warrant Phase II vapor sampling?",
+            "Which RECs are historical vs. active for Vista East Austin?",
         ),
     ),
 
@@ -213,6 +240,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "memo: draft the investment memo for Arden Buckhead",
             "Write a 2-page IC memo for Parkline Downtown",
+            "Generate risks + mitigants section for the Phoenix industrial deal",
+            "Memo with full returns table + exit assumptions for Vista East Austin",
         ),
     ),
     AgentSpec(
@@ -223,6 +252,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "teaser: build a teaser for the Phoenix industrial deal",
             "Draft a teaser for LPs on the Tampa retail portfolio",
+            "Build a 2-page teaser for Arden Buckhead",
+            "Teaser for the Nashville MF deal with returns snapshot",
         ),
     ),
     AgentSpec(
@@ -233,6 +264,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "lpupd: draft Q1 letter for Fund II LPs",
             "Generate a portfolio update for the industrial sleeve",
+            "Write the Q3 LP letter with 4 deals closed and 2 under LOI",
+            "Draft an interim capital-call notice with deployment context",
         ),
     ),
     AgentSpec(
@@ -243,6 +276,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "crm: who are the top 10 LPs to reach out to this week?",
             "Draft a re-engagement email to LPs we haven't touched in 60 days",
+            "Which LPs fit a Sun Belt MF fund with $5M min commit?",
+            "List LPs in the qualified stage and draft personalized outreach",
         ),
     ),
 
@@ -255,6 +290,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "rentopt: what rent should we push for Parkline Downtown on renewals?",
             "Where is in-place most below market across my portfolio?",
+            "Recommend renewal pricing for Arden Buckhead units expiring in 90 days",
+            "Model a 4% across-the-board push at Vista East Austin",
         ),
     ),
     AgentSpec(
@@ -265,6 +302,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "opex: what's driving the variance at Arden Buckhead this month?",
             "Show me the top 5 portfolio-wide opex variances",
+            "Utilities variance YTD — break down by property",
+            "Which properties are over budget on R&M by more than 10%?",
         ),
     ),
     AgentSpec(
@@ -275,6 +314,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "capex: rank my open capex projects by ROI",
             "Should we do the roof replacement or the unit turn program first?",
+            "Build a 3-year capex plan for the Phoenix industrial portfolio",
+            "Which deferred items pose the biggest insurance risk?",
         ),
     ),
     AgentSpec(
@@ -285,6 +326,8 @@ AGENTS: tuple[AgentSpec, ...] = (
         example_prompts=(
             "churn: which industrial tenants are most at risk of leaving?",
             "Score renewal likelihood for Deep Ellum Commerce Center",
+            "Top 10 tenants with expirations in next 180 days by churn risk",
+            "What retention actions should we take on the 3 at-risk anchors?",
         ),
     ),
 )
