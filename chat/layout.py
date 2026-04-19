@@ -18,6 +18,7 @@ def chat_page(*, user_email: str | None, sessions: list, current_sid: str = "",
         Meta(name="viewport", content="width=device-width, initial-scale=1"),
         Meta(name="description", content="Bricksmith — agentic AI for commercial real estate"),
         Title(f"App · {SITE_NAME}"),
+        Link(rel="icon", type="image/svg+xml", href="/static/favicon.svg"),
         Link(rel="preconnect", href="https://fonts.googleapis.com"),
         Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=""),
         Link(

@@ -204,6 +204,7 @@ def _head(title: str) -> Head:
         Meta(charset="utf-8"),
         Meta(name="viewport", content="width=device-width, initial-scale=1"),
         Title(f"{title} · Bricksmith"),
+        Link(rel="icon", type="image/svg+xml", href="/static/favicon.svg"),
         Link(rel="preconnect", href="https://fonts.googleapis.com"),
         Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=""),
         Link(rel="stylesheet",
