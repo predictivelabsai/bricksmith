@@ -1,4 +1,4 @@
-"""Shared helpers for building LangGraph ReAct agents.
+"""Shared helpers for building ReAct-style tool-calling agents.
 
 Every agent module exports `build()` that returns a cached graph. This module
 provides the canonical factory so agents stay consistent in shape.
@@ -32,7 +32,7 @@ def _load_system_prompt(slug: str) -> str:
 
 
 def build_agent(spec: AgentSpec, tools: list[BaseTool]):
-    """Build a LangGraph ReAct agent with Grok + the provided tools.
+    """Build a ReAct-style tool-calling agent with Grok + the provided tools.
 
     Intentionally NOT cached here — caller may want different tool sets per
     session. Agent module-level `build()` functions own their own caching.

@@ -4,13 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Bricksmith is an agentic AI platform for commercial real estate — 22 LangGraph ReAct specialist agents (sourcing, underwriting, diligence, capital/LP, asset management) served from **one FastHTML app** (marketing landing + 3-pane chat UI) backed by PostgreSQL + pgvector. Ships with a deterministic synthetic CRE dataset so the whole system runs end-to-end without external feeds.
+Bricksmith is an agentic AI platform for commercial real estate — a squad of specialist AI agents (currently 22, across sourcing, underwriting, diligence, capital/LP, and asset management) served from **one FastHTML app** (marketing landing + 3-pane chat UI) backed by PostgreSQL + pgvector. Ships with a deterministic synthetic CRE dataset so the whole system runs end-to-end without external feeds.
+
+**User-facing framing:** the product is marketed as "Your CRE Deal AI Squad" — avoid surfacing the "22 agents" count in copy (landing, PDF, emails). Internally it's fine to talk in concrete numbers; in UI / marketing, lead with the squad framing.
 
 ## Stack
 
 - Python 3.13, FastHTML + Uvicorn (single process, default port 5057).
 - LLM: xAI Grok via OpenAI-compatible endpoint. Default model `grok-4-fast-reasoning`, agent/tool-calling model `grok-4`. `utils/llm.py` is the single source of truth — nothing should call `ChatOpenAI` directly.
-- Agent framework: `langgraph.prebuilt.create_react_agent`, one per specialty.
+- Agent framework: ReAct-style tool-calling agents, one per specialty (the underlying graph library is called in `agents/base.py`; nothing else should import it directly).
 - DB: `DB_URL` points at a shared Postgres; we only ever touch schemas `bricksmith` (OLTP) and `bricksmith_rag` (pgvector). All SQL must fully-qualify — never rely on `search_path`.
 - Embeddings: default `local` via fastembed (BAAI/bge-small-en-v1.5, 384 dim, no API key). `openai` is a supported fallback. Provider is pluggable in `rag/embeddings.py`.
 
@@ -30,7 +32,7 @@ python main.py                            # serves on :5057 (override via PORT e
 pytest -q tests/
 pytest -q tests/test_agents_smoke.py::test_every_agent_builds  # single test
 
-# end-to-end regression across all 22 agents (hits Grok — ~5-15 min)
+# end-to-end regression across every agent in the squad (hits Grok — ~15-20 min)
 python -m tests.regression_suite                # → docs/regression-latest.md
 python -m tests.regression_suite --slug deal_triage  # single agent
 
@@ -47,7 +49,7 @@ curl http://localhost:5057/app/_debug/ping        # returns {"ok":true, "reply":
 # regenerate the demo artifacts (server must be running on :5057)
 python -m scripts.capture_screenshots     # → screenshots/01…12*.png (app-functionality tour)
 python -m scripts.make_gif                # → docs/bricksmith.gif (11-frame app loop, no landing)
-python -m scripts.make_pdf                # → docs/bricksmith-product-tour.pdf (12 landscape slides)
+python -m scripts.make_pdf                # → docs/bricksmith-product-tour.pdf (13 landscape slides, contact close)
 ```
 
 Notes:

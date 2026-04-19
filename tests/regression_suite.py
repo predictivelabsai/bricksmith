@@ -30,7 +30,7 @@ REPORT_PATH = Path(__file__).resolve().parent.parent / "docs" / "regression-late
 
 
 def _extract_final(result) -> tuple[str, list[str]]:
-    """Pull the final assistant text + names of tools called from a LangGraph result."""
+    """Pull the final assistant text + names of tools called from an agent result."""
     messages = result.get("messages") if isinstance(result, dict) else None
     if not messages:
         return (str(result)[:500], [])

@@ -27,7 +27,7 @@ def build_llm(model: str | None = None, temperature: float = 0.0, **kw) -> ChatO
 
 
 def build_agent_llm(temperature: float = 0.0, **kw) -> ChatOpenAI:
-    """LLM for LangGraph ReAct agents — uses the premium tool-calling model."""
+    """LLM for ReAct-style tool-calling agents — uses the premium tool-calling model."""
     return build_llm(model=settings().xai_agent_model, temperature=temperature, **kw)
 
 
