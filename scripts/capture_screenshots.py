@@ -36,7 +36,7 @@ VIEWPORT = {"width": 1440, "height": 900}
 # them up in the intended narrative order.
 TOUR = [
     # (filename, url, wait_selector, full_page, action)
-    ("01-home.png",              "/",                     "text=22 specialist agents", False, None),
+    ("01-home.png",              "/",                     "text=Your CRE Deal AI Squad", False, None),
     ("02-pipeline.png",          "/app/pipeline",         ".kanban-board",             True,  None),
     ("03-pipeline-filtered.png", "/app/pipeline?asset=multifamily", ".kanban-board",   True,  None),
     ("04-deal-detail.png",       None,                    ".deal-brief",               False, "first_deal"),

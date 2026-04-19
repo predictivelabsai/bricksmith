@@ -59,7 +59,7 @@ def welcome_hero():
         Div(
             Span("◆", cls="hero-mark"),
             H1("Bricksmith", cls="welcome-title"),
-            P("22 specialist agents. Type a prompt — the router picks the right one.",
+            P("Your CRE deal AI squad. Type a prompt — the router picks the right specialist.",
               cls="welcome-sub"),
             cls="welcome-head",
         ),

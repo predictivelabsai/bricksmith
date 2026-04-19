@@ -1,12 +1,12 @@
 # Bricksmith
 
-Agentic AI for commercial real estate — 22 specialist agents that underwrite, close and manage your deals.
+Your CRE Deal AI Squad — a specialist team of agents that underwrite, close and manage your deals.
 
 ![Bricksmith demo](docs/bricksmith.gif)
 
-- **Marketing landing** at `/` with hero, agent directory, how-it-works, pricing.
-- **3-pane chat app** at `/app` with left agent/session browser, centre chat, right artifact pane.
-- **22 LangGraph ReAct agents** across sourcing, underwriting, diligence, capital/LP, and asset management — routed by prefix (`triage:`, `pf:`, `memo:`…) or by keyword heuristics with an LLM fallback classifier.
+- **Marketing landing** at `/` with hero, squad directory, how-it-works, pricing.
+- **3-pane chat app** at `/app` with left squad/session browser, centre chat, right artifact pane.
+- **LangGraph ReAct agents** across sourcing, underwriting, diligence, capital/LP, and asset management — routed by prefix (`triage:`, `pf:`, `memo:`…) or by keyword heuristics with an LLM fallback classifier.
 - **xAI Grok** as the default LLM via OpenAI-compatible endpoint.
 - **PostgreSQL** on the existing `DB_URL` with two schemas: `bricksmith` (OLTP — properties, rent rolls, T12s, leases, comps, pro formas, debt stacks, LP CRM, market signals) and `bricksmith_rag` (pgvector — documents, chunks, embeddings).
 - **Synthetic CRE dataset** out of the box: 40 properties across 8 Sun Belt metros, ~2,600 rent-roll line items, 480 T12 months, 480 comps, 2,640 market-signal rows, 60 LP contacts, 237 indexed documents (leases, zoning memos, Phase I ESAs, PCRs, title commitments, market reports).
@@ -33,7 +33,7 @@ main.py              entrypoint (thin shim)
 app.py               FastHTML app, mounts landing + chat
 landing/             / /platform /agents /agents/<slug> /how-it-works /pricing /contact
 chat/                /app + /app/chat (SSE stream) + /app/auth/*
-agents/              registry + router + 5 category packages (22 agents total)
+agents/              registry + router + 5 category packages (the full squad)
 tools/               StructuredTools: properties, rentroll, financials, market, diligence, capital, asset, rag
 db/                  schema.sql, rag_schema.sql, migrate.py
 rag/                 embeddings (pluggable), indexer, retriever

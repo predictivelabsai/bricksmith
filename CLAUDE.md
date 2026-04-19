@@ -44,13 +44,16 @@ python -m synthetic.generate --limit 5 --skip-rag   # tiny subset for quick iter
 # end-to-end live ping (server running)
 curl http://localhost:5057/app/_debug/ping        # returns {"ok":true, "reply":"pong"}
 
-# regenerate the demo artifacts (server must be running)
-python -m scripts.capture_screenshots     # → screenshots/01…10*.png
-python -m scripts.make_gif                # → docs/bricksmith.gif
-python -m scripts.make_pdf                # → docs/bricksmith-product-tour.pdf
+# regenerate the demo artifacts (server must be running on :5057)
+python -m scripts.capture_screenshots     # → screenshots/01…12*.png (app-functionality tour)
+python -m scripts.make_gif                # → docs/bricksmith.gif (11-frame app loop, no landing)
+python -m scripts.make_pdf                # → docs/bricksmith-product-tour.pdf (12 landscape slides)
 ```
 
-Note: `EMBEDDING_DIM` is baked into the `embeddings.embedding vector(N)` column at migrate time. Changing it requires `migrate --drop` + re-seed.
+Notes:
+- `EMBEDDING_DIM` is baked into the `embeddings.embedding vector(N)` column at migrate time. Changing it requires `migrate --drop` + re-seed.
+- `main.py` calls `app._serve_default()` (not FastHTML's `serve()`), because FastHTML's default wrapper binds to port 5001 and ignores the `PORT` env.
+- `tests.regression_suite` exits 1 if any agent fails — baseline is 20/22 passing (see `docs/regression-latest.md`). Two known failures to fix in tool code: `comp_finder` (Decimal not JSON-serializable in the `__ARTIFACT__` payload) and `doc_room_auditor` (SQL placeholder/parameter count mismatch).
 
 ## Architecture — the picture you need before editing
 
@@ -97,11 +100,19 @@ A tool that wants to render in the right artifact pane returns a string starting
 
 `synthetic/generate.py` is the one CLI that owns seeding. It upserts 40 properties into `bricksmith.properties`, generates rent rolls + T12s + comps + market signals + LPs, then writes ~237 lease/zoning/environmental/PCR/title/market docs into the RAG index. Everything is seeded from `random.Random(seed)` so `--seed 42` produces stable test data.
 
+### Web search (sourcing agents only)
+
+`tools/search.py` exposes a `web_search` StructuredTool — Tavily preferred, EXA fallback. Both keys are optional (`TAVILY_API_KEY`, `EXA_API_KEY` in `utils/config.py`); without either, the tool returns a neutral "search unavailable" string instead of crashing. Wired only into the four sourcing agents (`market_scanner`, `deal_triage`, `comp_finder`, `seller_intent`) — do not add to underwriting/diligence agents, they should work off the synthetic corpus.
+
+## Deployment
+
+Single-stage `Dockerfile` + `docker-compose.yaml` target Coolify. The image pre-downloads the fastembed ONNX model at build time so first-request latency stays low. `docker-entrypoint.sh` runs `python -m db.migrate` before the server starts — skip it with `BRICKSMITH_SKIP_MIGRATE=1` when the schema is already in place (e.g. in CI or when pointing at a shared DB). Only three env vars are required in compose: `DB_URL`, `XAI_API_KEY`, `APP_SECRET`; everything else defaults via `utils/config.py`.
+
 ## Conventions
 
 - All LLM calls go through `utils.llm.build_llm()` (reasoning) or `build_agent_llm()` (tool-calling); never construct `ChatOpenAI` elsewhere.
 - Every agent lives under `agents/<category>/<slug>.py`, exports `SPEC`, `TOOLS`, and a `build()` returning the cached graph. Do not export a `SYSTEM_PROMPT` symbol — prompts are filesystem-loaded.
-- When adding a tool, prefer returning `__ARTIFACT__` + JSON when the result is tabular or a citation list so it lands in the right pane automatically.
-- SQL must fully-qualify `bricksmith.*` / `bricksmith_rag.*`. Many tools share a small `_resolve_pid(slug_or_id)` helper — keep it consistent when extending.
+- When adding a tool, prefer returning `__ARTIFACT__` + JSON when the result is tabular or a citation list so it lands in the right pane automatically. Cast `Decimal` columns to `float` (or `str`) before `json.dumps` — raw `Decimal` breaks the serializer.
+- SQL must fully-qualify `bricksmith.*` / `bricksmith_rag.*`. Many tools share a small `_resolve_pid(slug_or_id)` helper — keep it consistent when extending. Analytics in particular runs via the psycopg3 pool (not the SQLAlchemy engine) because our `DB_URL` resolves to psycopg2 under SQLAlchemy's default driver, and we don't ship psycopg2.
 - Synthetic generators must be deterministic given `--seed`.
 - Do not commit `.env`; it's `.gitignore`d. `.env.example` is the canonical template.

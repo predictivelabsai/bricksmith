@@ -198,16 +198,16 @@ def Section_(*content, bleed: bool = False, cls: str = ""):
 
 def Hero():
     headline = (
-        Span("22 specialist agents "),
+        Span("Your CRE Deal AI Squad — "),
         Span("underwriting, ", cls="text-accent"),
         Span("closing, "),
         Span("and managing ", cls="text-accent"),
         Span("your deals."),
     )
     lede = (
-        "Not a prompt pack. Not a build-it-yourself kit. Bricksmith is a full agentic system "
-        "already wired into PropAnalyst — sourcing deals, running diligence, and building "
-        "investor-ready models while you sleep."
+        "Not a prompt pack. Not a build-it-yourself kit. Bricksmith is a full agentic "
+        "system already wired into PropAnalyst — a specialist team that sources deals, "
+        "runs diligence, and builds investor-ready models while you sleep."
     )
     return Section(
         Div(
@@ -221,7 +221,7 @@ def Hero():
                 P(lede, cls="mt-6 md:mt-8 text-base md:text-xl text-ink-muted max-w-2xl leading-relaxed"),
                 Div(
                     Button_("Open the app", href="/app", primary=True),
-                    Button_("Meet the 22 agents", href="/agents", primary=False),
+                    Button_("Meet the squad", href="/agents", primary=False),
                     cls="mt-8 md:mt-10 flex items-center gap-3 flex-wrap",
                 ),
                 cls="relative z-30 max-w-7xl mx-auto px-5 md:px-6 py-24 md:py-0",
@@ -231,8 +231,8 @@ def Hero():
         # Sub-band of stats
         Div(
             Div(
-                _StatCell("22", "specialist agents"),
                 _StatCell("5", "workflow stages, end-to-end"),
+                _StatCell("10", "pipeline stages, one board"),
                 _StatCell("<90s", "to a go / no-go decision"),
                 _StatCell("$0", "to try with synthetic data"),
                 cls="max-w-7xl mx-auto px-5 md:px-6 py-5 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-6",
