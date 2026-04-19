@@ -235,7 +235,7 @@ def Hero():
                 _StatCell("5", "workflow stages, end-to-end"),
                 _StatCell("10", "pipeline stages, one board"),
                 _StatCell("<90s", "to a go / no-go decision"),
-                _StatCell("$0", "to try with synthetic data"),
+                _StatCell("BYOD", "bring your own data"),
                 cls="max-w-7xl mx-auto px-5 md:px-6 py-5 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-6",
             ),
             cls="border-y border-line bg-bg-elevated/60",
