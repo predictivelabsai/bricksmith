@@ -1,0 +1,33 @@
+.git
+.gitignore
+.venv
+.env
+.env.local
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.playwright-mcp
+.claude
+
+# Dev / demo artifacts that aren't needed at runtime
+screenshots
+docs
+tests
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coolify / deploy artifacts
+*.coolify
