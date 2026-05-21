@@ -214,3 +214,12 @@ CREATE TABLE IF NOT EXISTS bricksmith.agent_invocations (
     created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS agent_invocations_session_idx ON bricksmith.agent_invocations(session_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS bricksmith.prompt_versions (
+    id          BIGSERIAL PRIMARY KEY,
+    slug        TEXT        NOT NULL,
+    content     TEXT        NOT NULL,
+    changed_by  TEXT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS prompt_versions_slug_idx ON bricksmith.prompt_versions(slug, id DESC);
