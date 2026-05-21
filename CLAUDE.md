@@ -11,7 +11,7 @@ Bricksmith is an agentic AI platform for commercial real estate — a squad of s
 ## Stack
 
 - Python 3.13, FastHTML + Uvicorn (single process, default port 5057).
-- LLM: xAI Grok via OpenAI-compatible endpoint. Default model `grok-4-fast-reasoning`, agent/tool-calling model `grok-4`. `utils/llm.py` is the single source of truth — nothing should call `ChatOpenAI` directly.
+- LLM: pluggable via `MODEL_PROVIDER` env — `xai` (Grok, default) or `openai`. Model names configured per-provider (`XAI_MODEL`/`XAI_AGENT_MODEL` or `OPENAI_MODEL`/`OPENAI_AGENT_MODEL`). `utils/llm.py` is the single source of truth — nothing should call `ChatOpenAI` directly.
 - Agent framework: ReAct-style tool-calling agents, one per specialty (the underlying graph library is called in `agents/base.py`; nothing else should import it directly).
 - DB: `DB_URL` points at a shared Postgres; we only ever touch schemas `bricksmith` (OLTP) and `bricksmith_rag` (pgvector). All SQL must fully-qualify — never rely on `search_path`.
 - Embeddings: default `local` via fastembed (BAAI/bge-small-en-v1.5, 384 dim, no API key). `openai` is a supported fallback. Provider is pluggable in `rag/embeddings.py`.
